@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3aaaadcfc7063e49fec7ca23206edafe",
+    "revision": "a47c1c52309acace4d4b912bddc11625",
     "url": "/battletech-tools/index.html"
   },
   {
