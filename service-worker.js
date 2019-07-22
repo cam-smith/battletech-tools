@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/battletech-tools/precache-manifest.f24d426ebf6e07b6fcee985a3593a259.js"
+  "/battletech-tools/precache-manifest.e0e952f4f7e8cbadc0d9baa4c0f8be76.js"
 );
 
 self.addEventListener('message', (event) => {
