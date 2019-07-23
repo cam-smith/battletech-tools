@@ -7,9 +7,9 @@
       var segmentCount = 0;
 
       var l = window.location;
-      var pathName = pathName;
+      var pathName = l.pathname;
       while(pathName.indexOf('%2F') > -1 ) {
-        pathName.replace('%2F', '/')
+        pathName = pathName.replace('%2F', '/')
       }
       l.replace(
         l.protocol
