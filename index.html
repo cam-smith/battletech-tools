@@ -4,7 +4,9 @@
           if( l.search.indexOf("?rd=") === 0 ) {
             let newPath = "/battletech-tools" + l.search.replace("?rd=%2Fbattletech-tools", "");
             while( newPath.indexOf("%2F") > -1 ) {
+              console.log("b", newPath)
               newPath = newPath.replace("%2F", "/");
+              console.log("a", newPath)
             }
             window.history.replaceState(
               null,
