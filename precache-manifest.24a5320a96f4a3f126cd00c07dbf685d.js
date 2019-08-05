@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "662dda3bf5ee4a611d5713048e086bec",
+    "revision": "c8c12289817d07111b5f623b7fd426af",
     "url": "/battletech-tools/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/battletech-tools/static/css/2.22a7d4ef.chunk.css"
   },
   {
-    "revision": "607d59a0a9c57171578d",
+    "revision": "e94804c4d67fb0b60d0d",
     "url": "/battletech-tools/static/css/main.225a994a.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/battletech-tools/static/js/2.de0f39ed.chunk.js"
   },
   {
-    "revision": "607d59a0a9c57171578d",
-    "url": "/battletech-tools/static/js/main.4614e1ca.chunk.js"
+    "revision": "e94804c4d67fb0b60d0d",
+    "url": "/battletech-tools/static/js/main.bd66d7f4.chunk.js"
   },
   {
     "revision": "ea3efc62bdcb3981b3fd",
