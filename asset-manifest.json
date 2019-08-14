@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/battletech-tools/static/css/main.59e40c1c.chunk.css",
-    "main.js": "/battletech-tools/static/js/main.89c95f1a.chunk.js",
-    "main.js.map": "/battletech-tools/static/js/main.89c95f1a.chunk.js.map",
+    "main.js": "/battletech-tools/static/js/main.6bd27b45.chunk.js",
+    "main.js.map": "/battletech-tools/static/js/main.6bd27b45.chunk.js.map",
     "runtime~main.js": "/battletech-tools/static/js/runtime~main.ba38ca5b.js",
     "runtime~main.js.map": "/battletech-tools/static/js/runtime~main.ba38ca5b.js.map",
     "static/css/2.22a7d4ef.chunk.css": "/battletech-tools/static/css/2.22a7d4ef.chunk.css",
     "static/js/2.82a6c730.chunk.js": "/battletech-tools/static/js/2.82a6c730.chunk.js",
     "static/js/2.82a6c730.chunk.js.map": "/battletech-tools/static/js/2.82a6c730.chunk.js.map",
     "index.html": "/battletech-tools/index.html",
-    "precache-manifest.2e14df111dcb35ea108538a24d0065fd.js": "/battletech-tools/precache-manifest.2e14df111dcb35ea108538a24d0065fd.js",
+    "precache-manifest.e0c61c503a9f0716b673b069d7f66951.js": "/battletech-tools/precache-manifest.e0c61c503a9f0716b673b069d7f66951.js",
     "service-worker.js": "/battletech-tools/service-worker.js",
     "static/css/2.22a7d4ef.chunk.css.map": "/battletech-tools/static/css/2.22a7d4ef.chunk.css.map",
     "static/css/main.59e40c1c.chunk.css.map": "/battletech-tools/static/css/main.59e40c1c.chunk.css.map",
