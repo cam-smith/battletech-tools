@@ -1,3 +1,4 @@
+import { ISpecialPilotAbility, specialPilotAbilities } from "../Data/special-pilot-abilities";
 
 export interface IAlphaStrikeDamage {
     short: string;
@@ -30,6 +31,15 @@ export interface ASMULTech {
     Name: string;
     SortOrder: number;
 }
+
+export interface IASPilot {
+    Name: string;
+    Skill: number;
+    SpecialPilotAbilities: ISpecialPilotAbility[];
+    IsCommander: boolean;
+    IsSubCommander: boolean;
+}
+
 export interface IASMULUnit {
     BFAbilities: string;
     BFArmor: number;
@@ -72,7 +82,8 @@ export interface IASMULUnit {
 
     customName?: string;
     currentSkill?: number;
-
+    pilot?: IASPilot;
+    
     currentArmor?: boolean[];
     currentStructure?: boolean[];
     engineHits?: boolean[];
@@ -160,6 +171,14 @@ export class AlphaStrikeUnit {
     weaponHits: boolean[] = [];
 
     customName: string = "";
+
+    pilot: IASPilot={
+        Name:"Default",
+        Skill: 4,
+        SpecialPilotAbilities:[],
+        IsCommander:false,
+        IsSubCommander:false,
+    };
 
     public getRawNumber( incomingString: string ): number {
         let myString = incomingString.replace(/\D/g,'');
@@ -285,12 +304,24 @@ export class AlphaStrikeUnit {
             }
 
             this.currentSkill = 4;
+            this.pilot = {
+                Name: "Default",
+                Skill: 4,
+                SpecialPilotAbilities:[],
+                IsCommander: false,
+                IsSubCommander: false
+            }
 
             this.currentHeat = 0;
             this.currentPoints = this.basePoints / 1;
 
-                if( incomingMechData.currentSkill )
+                if( incomingMechData.currentSkill ){
                     this.currentSkill = incomingMechData.currentSkill;
+                    this.pilot.Skill = incomingMechData.currentSkill;
+                }
+                if ( incomingMechData.pilot ){
+                    this.pilot=incomingMechData.pilot;
+                }
 
             } else {
                 // Interally Processed Data
@@ -339,18 +370,26 @@ export class AlphaStrikeUnit {
 
                 this.abilities = incomingMechData.abilities;
 
+
                 this.showDetails = incomingMechData.showDetails;
 
                 this.overheat = incomingMechData.overheat / 1;
 
                 this.basePoints = incomingMechData.basePoints / 1;
 
-                if( incomingMechData.currentSkill > 0  )
+                if( incomingMechData.currentSkill > 0  ){
                     this.currentSkill = incomingMechData.currentSkill;
-                else
+                }else{
                     this.currentSkill = 4;
+                    this.pilot={ Name: "test", Skill: 4, SpecialPilotAbilities: [], IsCommander: true, IsSubCommander: true}
+                }
+
 
                 this.currentPoints = this.basePoints;
+            }
+
+            if ( incomingMechData.pilot ){
+                this.pilot=incomingMechData.pilot;
             }
 
             if( incomingMechData.currentArmor ) {
@@ -381,6 +420,7 @@ export class AlphaStrikeUnit {
 
     public setSkill( newSkillValue: number ) {
         this.currentSkill = newSkillValue ;
+        this.pilot.Skill = newSkillValue;
         this.calcCurrentVals();
     }
 
@@ -813,6 +853,7 @@ export class AlphaStrikeUnit {
             let returnValue: IASMULUnit = this.originalStats;
             returnValue.customName = this.customName;
             returnValue.currentSkill = this.currentSkill;
+            returnValue.pilot = this.pilot;
 
             returnValue.currentArmor = this.currentArmor;
             returnValue.currentStructure = this.currentStructure;

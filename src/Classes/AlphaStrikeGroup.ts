@@ -65,6 +65,14 @@ export default class AlphaStrikeGroup {
         return returnValue;
 	}
 
+	public getAverageSkill(): number {
+		let returnValue: number =0;
+		for( let unit of this.members ){
+			returnValue+= unit.pilot.Skill
+		}
+		return returnValue/this.members.length;
+	}
+
 	public getName( groupNumber: number): string {
 		if( this.customName ) {
 			return "Group #" + groupNumber.toString() + ": " + this.customName;
