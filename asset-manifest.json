@@ -1,26 +1,26 @@
 {
   "files": {
     "main.css": "/battletech-tools/static/css/main.0948b773.chunk.css",
-    "main.js": "/battletech-tools/static/js/main.0d9c541e.chunk.js",
-    "main.js.map": "/battletech-tools/static/js/main.0d9c541e.chunk.js.map",
+    "main.js": "/battletech-tools/static/js/main.33a5f63b.chunk.js",
+    "main.js.map": "/battletech-tools/static/js/main.33a5f63b.chunk.js.map",
     "runtime-main.js": "/battletech-tools/static/js/runtime-main.26f14b42.js",
     "runtime-main.js.map": "/battletech-tools/static/js/runtime-main.26f14b42.js.map",
     "static/css/2.64a99b10.chunk.css": "/battletech-tools/static/css/2.64a99b10.chunk.css",
-    "static/js/2.07062793.chunk.js": "/battletech-tools/static/js/2.07062793.chunk.js",
-    "static/js/2.07062793.chunk.js.map": "/battletech-tools/static/js/2.07062793.chunk.js.map",
+    "static/js/2.4416d935.chunk.js": "/battletech-tools/static/js/2.4416d935.chunk.js",
+    "static/js/2.4416d935.chunk.js.map": "/battletech-tools/static/js/2.4416d935.chunk.js.map",
     "index.html": "/battletech-tools/index.html",
-    "precache-manifest.2550d93d2e9ed3206089af40227541a7.js": "/battletech-tools/precache-manifest.2550d93d2e9ed3206089af40227541a7.js",
+    "precache-manifest.5dc145aa61a37800511a7a730614d506.js": "/battletech-tools/precache-manifest.5dc145aa61a37800511a7a730614d506.js",
     "service-worker.js": "/battletech-tools/service-worker.js",
     "static/css/2.64a99b10.chunk.css.map": "/battletech-tools/static/css/2.64a99b10.chunk.css.map",
     "static/css/main.0948b773.chunk.css.map": "/battletech-tools/static/css/main.0948b773.chunk.css.map",
-    "static/js/2.07062793.chunk.js.LICENSE": "/battletech-tools/static/js/2.07062793.chunk.js.LICENSE",
+    "static/js/2.4416d935.chunk.js.LICENSE": "/battletech-tools/static/js/2.4416d935.chunk.js.LICENSE",
     "static/media/index.scss": "/battletech-tools/static/media/DotMatrixRegular.d157e2ba.woff2"
   },
   "entrypoints": [
     "static/js/runtime-main.26f14b42.js",
     "static/css/2.64a99b10.chunk.css",
-    "static/js/2.07062793.chunk.js",
+    "static/js/2.4416d935.chunk.js",
     "static/css/main.0948b773.chunk.css",
-    "static/js/main.0d9c541e.chunk.js"
+    "static/js/main.33a5f63b.chunk.js"
   ]
 }
