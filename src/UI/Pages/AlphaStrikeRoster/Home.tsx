@@ -4,7 +4,7 @@ import {IAppGlobals} from '../../AppRouter';
 import { getMULASSearchResults } from '../../../utils';
 import { IASMULUnit, AlphaStrikeUnit } from '../../../Classes/AlphaStrikeUnit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faEdit, faBars, faEye, faHeart, faFileImport, faArrowsAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faEdit, faBars, faEye, faHeart, faFileImport, faArrowsAlt, faStar, faStarHalfAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'react-bootstrap';
 import { Modal } from 'react-bootstrap';
 import AlphaStrikeUnitSVG from '../../Components/SVG/AlphaStrikeUnitSVG';
@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import AlphaStrikeGroup from '../../../Classes/AlphaStrikeGroup';
 import UIPage from '../../Components/UIPage';
 import { formationBonuses } from '../../../Data/formation-bonuses';
+import { specialPilotAbilities, ISpecialPilotAbility } from '../../../Data/special-pilot-abilities';
 
 export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, IHomeState> {
     searchTech: string = "";
@@ -288,6 +289,53 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       }
     }
 
+    getAvailableSlots(skill:number):boolean[]{
+
+      let pool=5;
+      console.log(pool-skill);
+      let result:boolean[]=[];
+      for (let i=0;i<(pool-skill);i++){
+        console.log("pushed")
+        result.push(false);
+      }
+      return result;
+    }
+    getIsValidSPA(spa:ISpecialPilotAbility, unit:AlphaStrikeUnit):boolean{
+      let returnval:boolean=false;
+      let pointsAvailable:number=0;
+      switch(unit.pilot.Skill){
+        case 4: 
+          pointsAvailable=2;
+          break;
+        
+        case 3: 
+          pointsAvailable=4;
+          break;
+        
+        case 2: 
+          pointsAvailable=4;
+          break;
+        
+        case 1:
+          pointsAvailable=6;
+          break;
+        case 0:
+          pointsAvailable=6;
+          break;
+        default:
+          break;
+
+      };
+      let costval:boolean=spa.Cost<=pointsAvailable;
+      let typeval:boolean=spa.Types.some(x=>(x===unit.type || x==="Any"));
+      //console.log(spa.Name + " applicable to:"+ spa.Types + " unit:" + unit.type + "equals" + typeval + " points"+costval + " returned"+ (costval&&typeval));
+
+      returnval=  costval && typeval;
+
+
+      return returnval;
+    }
+
     render() {
       return (
         <>
@@ -340,6 +388,51 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               <option value={8}>8</option>
                             </select>
                           </label>
+
+                          <label>
+                            Pilot Name:<br/>
+                            <input 
+                              type="text" 
+                              value={this.state.showASUnit.pilot.Name}
+                              placeholder="Pilot Name"
+                            />
+                          </label>
+
+
+                          <label>
+                            Skill Level:<br />
+                            <select
+                              value={this.state.showASUnit.pilot.Skill}
+                              onChange={this.updateUnitSkill}
+                            >
+                              <option value={1}>1</option>
+                              <option value={2}>2</option>
+                              <option value={3}>3</option>
+                              <option value={4}>4</option>
+                              <option value={5}>5</option>
+                              <option value={6}>6</option>
+                              <option value={7}>7</option>
+                              <option value={8}>8</option>
+                            </select>
+                          </label>
+
+                          <label>Special Pilot Abilities:
+                            <select id="spas" multiple>
+                              {specialPilotAbilities.map((spa:ISpecialPilotAbility)=>{
+                              return (<option key={spa.Name} value={spa.Name} disabled={!this.getIsValidSPA(spa,this.state.showASUnit!)} >{spa.Name}-{spa.Cost}-{spa.Summary}</option>)
+                              })}
+                            </select>
+                          </label>
+                            
+                            
+                            <label>
+                            <input type="checkbox" id="Commander" checked={this.state.showASUnit.pilot.IsCommander}/> Commander
+                            </label>
+                            <label>
+                            <input type="checkbox" id="SubCommander" checked={this.state.showASUnit.pilot.IsSubCommander}/> SubCommander
+                            </label>
+
+                          
                         </div>
                       </div>
                     ) : (
@@ -429,7 +522,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                         <>
                         {asGroup.members.map( (asUnit, asUnitIndex) => {
                           return (
-                            <tr key={asUnitIndex}>
+                            <tr key={"G"+asGroupIndex + "U"+asUnitIndex}>
                               <td className="text-left min-width no-wrap">
                                 {this.props.appGlobals.currentASForce.getTotalGroups() > 1 ?
                                 (
@@ -499,6 +592,15 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                                   <></>
                                 )}
                                 {asUnit.name}
+                                <br/>
+                                { (asUnit.pilot.IsCommander)?(
+                                  <FontAwesomeIcon icon={faStar} />
+                                ):null }
+                                { (asUnit.pilot.IsSubCommander)?(
+                                  <FontAwesomeIcon icon={faStarHalfAlt} />
+                                ):null }
+
+                                Pilot:{asUnit.pilot.Name} - Skill:{asUnit.pilot.Skill}
                               </td>
                               <td>{asUnit.currentPoints}</td>
 
@@ -516,7 +618,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                           <td className="text-left min-width no-wrap"></td>
                           <td>
                             <strong>Available Bonuses</strong>:({asGroup.availableFormationBonuses.length-1})
-                            <select 
+                            <select
                               value={asGroup.formationBonus? asGroup.formationBonus.Name:"" }
                               onChange={(event:React.FormEvent<HTMLSelectElement>)=>this.updateFormationBonus(event, asGroupIndex)}
                             >
@@ -536,7 +638,10 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                             ) : null
                             }
                           </td>
-                          <td>Points: {asGroup.getTotalPoints()}</td>
+                          <td>
+                            Points: {asGroup.getTotalPoints()}<br/>
+                            Avg. Skill: {asGroup.getAverageSkill().toPrecision(3)}
+                          </td>
                         </tr>
                       </tfoot>
 
@@ -559,7 +664,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                   <strong>Total Points</strong>: {this.props.appGlobals.currentASForce.getTotalPoints()}<br />
 
                 </p>
-                
+
                 </div>
               </div>
 
