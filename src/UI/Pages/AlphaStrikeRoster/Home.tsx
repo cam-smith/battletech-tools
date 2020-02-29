@@ -88,6 +88,11 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.removeGroup = this.removeGroup.bind(this);
         this.removeFavoriteConfirm = this.removeFavoriteConfirm.bind(this);
 
+        this.renamePilot = this.renamePilot.bind(this);
+
+        this.setCommander = this.setCommander.bind(this);
+        this.setSubCommander = this.setSubCommander.bind(this);
+
         this.updateSearchResults();
     }
 
@@ -288,6 +293,16 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
       }
     }
+    renamePilot(event: React.FormEvent<HTMLInputElement>){
+      if(this.state.showASUnit){
+        let asUnit= this.state.showASUnit;
+        asUnit.pilot.Name = event.currentTarget.value;
+        this.setState({
+          showASUnit: asUnit,
+        })
+        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
+      }
+    }
 
     getAvailableSlots(skill:number):boolean[]{
 
@@ -325,7 +340,9 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         default:
           break;
 
-      };
+      }
+
+
       let costval:boolean=spa.Cost<=pointsAvailable;
       let typeval:boolean=spa.Types.some(x=>(x===unit.type || x==="Any"));
       //console.log(spa.Name + " applicable to:"+ spa.Types + " unit:" + unit.type + "equals" + typeval + " points"+costval + " returned"+ (costval&&typeval));
@@ -334,6 +351,40 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
 
 
       return returnval;
+    }
+
+
+    setCommander(force:AlphaStrikeGroup):boolean {
+      if(this.state.showASUnit){
+        let asUnit= this.state.showASUnit;
+        force.members.map(x=>{
+                              x.pilot.IsCommander=false;
+                              x.pilot.CommanderUuid="";
+                              });
+        asUnit.pilot.IsCommander = true;
+        asUnit.pilot.CommanderUuid = force.uuid;
+        this.setState({
+          showASUnit: asUnit,
+        })
+        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
+      }
+      return true;
+    }
+    setSubCommander(force:AlphaStrikeGroup):boolean {
+      if(this.state.showASUnit){
+        let asUnit= this.state.showASUnit;
+        force.members.map(x=>{
+                              x.pilot.IsSubCommander=false;
+                              x.pilot.SubCommanderUuid="";
+                              });
+        asUnit.pilot.IsSubCommander = true;
+        asUnit.pilot.SubCommanderUuid = force.uuid;
+        this.setState({
+          showASUnit: asUnit,
+        })
+        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
+      }
+      return true;
     }
 
     render() {
@@ -395,6 +446,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               type="text" 
                               value={this.state.showASUnit.pilot.Name}
                               placeholder="Pilot Name"
+                              onChange={this.renamePilot}
                             />
                           </label>
 
@@ -425,12 +477,32 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                           </label>
                             
                             
-                            <label>
-                            <input type="checkbox" id="Commander" checked={this.state.showASUnit.pilot.IsCommander}/> Commander
-                            </label>
-                            <label>
-                            <input type="checkbox" id="SubCommander" checked={this.state.showASUnit.pilot.IsSubCommander}/> SubCommander
-                            </label>
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              id="Commander" 
+                              //checked={this.state.showASUnit.pilot.IsCommander} 
+                              defaultChecked={this.state.showASUnit.pilot.IsCommander}
+                              onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
+                                  this.setCommander(
+                                                    this.props.appGlobals.currentASForce.groups[0]
+                                                    )
+                                            }}
+                            /> Commander
+                          </label>
+                          <label>
+                            <input 
+                              type="checkbox" 
+                              id="SubCommander" 
+                              //checked={this.state.showASUnit.pilot.IsSubCommander}
+                              defaultChecked={this.state.showASUnit.pilot.IsSubCommander}
+                              onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
+                                this.setSubCommander(
+                                                  this.props.appGlobals.currentASForce.groups[0]
+                                                  )
+                                          }}
+                            /> SubCommander
+                          </label>
 
                           
                         </div>

@@ -37,7 +37,9 @@ export interface IASPilot {
     Skill: number;
     SpecialPilotAbilities: ISpecialPilotAbility[];
     IsCommander: boolean;
+    CommanderUuid: string;
     IsSubCommander: boolean;
+    SubCommanderUuid: string;
 }
 
 export interface IASMULUnit {
@@ -178,6 +180,9 @@ export class AlphaStrikeUnit {
         SpecialPilotAbilities:[],
         IsCommander:false,
         IsSubCommander:false,
+        CommanderUuid: "",
+        SubCommanderUuid: "",
+
     };
 
     public getRawNumber( incomingString: string ): number {
@@ -309,7 +314,10 @@ export class AlphaStrikeUnit {
                 Skill: 4,
                 SpecialPilotAbilities:[],
                 IsCommander: false,
-                IsSubCommander: false
+                CommanderUuid:"",
+
+                IsSubCommander: false,
+                SubCommanderUuid:""
             }
 
             this.currentHeat = 0;
@@ -381,7 +389,7 @@ export class AlphaStrikeUnit {
                     this.currentSkill = incomingMechData.currentSkill;
                 }else{
                     this.currentSkill = 4;
-                    this.pilot={ Name: "test", Skill: 4, SpecialPilotAbilities: [], IsCommander: true, IsSubCommander: true}
+                    this.pilot={ Name: "test", Skill: 4, SpecialPilotAbilities: [], IsCommander: true, CommanderUuid: "", IsSubCommander: true, SubCommanderUuid:""}
                 }
 
 
