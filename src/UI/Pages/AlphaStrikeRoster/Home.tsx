@@ -889,8 +889,10 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                       <tr>
                         <th>&nbsp;</th>
                         <th>Name</th>
+                        <th>Intro</th>
                         <th>Rules</th>
                         <th>Tech</th>
+                        <th>Tons</th>
                         <th>Type</th>
                         <th>Points</th>
 
@@ -953,9 +955,13 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
     <FontAwesomeIcon icon={faEye} />
   </Button>
 </td>
-                              <td>{asUnit.Name}</td>
+                              <td>{asUnit.Name}<br/>
+                              <span className="statsBlock no-wrap">{asUnit.BFDamageShort}/{asUnit.BFDamageMedium}/{asUnit.BFDamageLong}/{asUnit.BFDamageExtreme} [{asUnit.BFArmor}/{asUnit.BFStructure}]</span>
+                              </td>
+                              <td>{asUnit.DateIntroduced}</td>
                               <td>{asUnit.Rules}</td>
                               <td>{asUnit.Technology.Name}</td>
+                              <td>{asUnit.Tonnage}</td>
                               <td>{asUnit.BFType}</td>
                               <td>{asUnit.BFPointValue}</td>
 
