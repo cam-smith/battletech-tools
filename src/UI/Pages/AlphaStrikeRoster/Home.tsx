@@ -55,6 +55,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
             foundItems: [],
             searchResults: lsSearchResults,
             showASUnit: null,
+            groupIndex: null,
             searchText: lsSearchTerm,
             editASUnit: false,
 
@@ -236,11 +237,12 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       })
     }
 
-    openEditUnit( showASUnit: AlphaStrikeUnit ) {
+    openEditUnit( showASUnit: AlphaStrikeUnit, groupIndex: number ) {
 
       this.setState({
         showASUnit: showASUnit,
         editASUnit: true,
+        groupIndex: groupIndex,
         contextMenuGroup: -1,
         contextMenuUnit: -1,
       })
@@ -250,6 +252,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
     closeShowUnitDialog() {
       this.setState({
         showASUnit: null,
+        groupIndex: null
       })
     }
 
@@ -379,18 +382,25 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       }
       return true;
     }
-    setSubCommander(force:AlphaStrikeGroup):boolean {
+
+    setSubCommander(force:AlphaStrikeGroup, newVal:boolean):boolean {
+      
       if(this.state.showASUnit){
+        var foundGroupIndex = this.props.appGlobals.currentASForce.groups.indexOf(force);
         let asUnit= this.state.showASUnit;
         force.members.map(x=>{
                               x.pilot.IsSubCommander=false;
                               x.pilot.SubCommanderUuid="";
+                              return true;
                               });
-        asUnit.pilot.IsSubCommander = true;
-        asUnit.pilot.SubCommanderUuid = force.uuid;
+
+        asUnit.pilot.IsSubCommander = newVal;
+        asUnit.pilot.SubCommanderUuid = newVal?force.uuid:"";
         this.setState({
           showASUnit: asUnit,
+          
         })
+        this.props.appGlobals.currentASForce.groups[foundGroupIndex] = force;
         this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
       }
       return true;
@@ -507,8 +517,10 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               //checked={this.state.showASUnit.pilot.IsSubCommander}
                               defaultChecked={this.state.showASUnit.pilot.IsSubCommander}
                               onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
+                                let cleanIndex: number = this.state.groupIndex===null?0:this.state.groupIndex;
                                 this.setSubCommander(
-                                                  this.props.appGlobals.currentASForce.groups[0]
+                                                  this.props.appGlobals.currentASForce.groups[cleanIndex],
+                                                  ev.target.checked
                                                   )
                                           }}
                             /> SubCommander
@@ -621,7 +633,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                                       className={this.state.contextMenuGroup === asGroupIndex && this.state.contextMenuUnit === asUnitIndex ? "styleless dd-menu active" : "styleless dd-menu"}
                                     >
                                       <li
-                                        onClick={() => this.openEditUnit(asUnit)}
+                                        onClick={() => this.openEditUnit(asUnit, asGroupIndex)}
                                         title="Edit this unit"
                                       ><
                                         FontAwesomeIcon icon={faEdit} /> Edit
@@ -649,7 +661,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                                   <Button
                                     variant="primary"
                                     className="btn-sm"
-                                    onClick={() => this.openEditUnit(asUnit)}
+                                    onClick={() => this.openEditUnit(asUnit, asGroupIndex)}
                                     title="Edit this unit's skill and name"
                                   >
                                     <FontAwesomeIcon icon={faEdit} />
@@ -994,6 +1006,7 @@ interface IHomeState {
 
   searchText: string;
   showASUnit: AlphaStrikeUnit | null;
+  groupIndex: number|null;
   editASUnit: boolean;
 
   contextMenuGroup: number;

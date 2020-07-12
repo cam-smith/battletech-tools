@@ -79,6 +79,8 @@ export default class AlphaStrikeForce {
         )  {
             if( this.groups[fromGroupIndex].members.length > fromUnitIndex ) {
                 let asUnit = this.groups[fromGroupIndex].members[fromUnitIndex];
+                asUnit.pilot.IsSubCommander = false;
+                asUnit.pilot.SubCommanderUuid = "";
                 this.groups[fromGroupIndex].members.splice(fromUnitIndex, 1 );
 
                 this.groups[toGroupIndex].members.push( asUnit);
