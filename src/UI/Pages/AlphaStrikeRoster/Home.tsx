@@ -13,6 +13,7 @@ import AlphaStrikeGroup from '../../../Classes/AlphaStrikeGroup';
 import UIPage from '../../Components/UIPage';
 import { formationBonuses } from '../../../Data/formation-bonuses';
 import { specialPilotAbilities, ISpecialPilotAbility } from '../../../Data/special-pilot-abilities';
+import AlphaStrikeForce from '../../../Classes/AlphaStrikeForce';
 
 export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, IHomeState> {
     searchTech: string = "";
@@ -354,19 +355,27 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
     }
 
 
-    setCommander(force:AlphaStrikeGroup):boolean {
+    setCommander(force:AlphaStrikeForce, newVal:boolean):boolean {
       if(this.state.showASUnit){
+        
+        force.groups.map(x=>{
+          x.members.map(x=>{
+            x.pilot.IsCommander=false;
+            x.pilot.CommanderUuid="";
+            return true;
+            });
+            return true;
+        });
         let asUnit= this.state.showASUnit;
-        force.members.map(x=>{
-                              x.pilot.IsCommander=false;
-                              x.pilot.CommanderUuid="";
-                              });
-        asUnit.pilot.IsCommander = true;
-        asUnit.pilot.CommanderUuid = force.uuid;
+
+        asUnit.pilot.IsCommander = newVal;
+        asUnit.pilot.CommanderUuid = newVal?force.uuid:"";
+        
         this.setState({
           showASUnit: asUnit,
         })
-        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
+        
+        this.props.appGlobals.saveCurrentASForce(force);
       }
       return true;
     }
@@ -485,7 +494,8 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               defaultChecked={this.state.showASUnit.pilot.IsCommander}
                               onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
                                   this.setCommander(
-                                                    this.props.appGlobals.currentASForce.groups[0]
+                                                    this.props.appGlobals.currentASForce,
+                                                    ev.target.checked
                                                     )
                                             }}
                             /> Commander
