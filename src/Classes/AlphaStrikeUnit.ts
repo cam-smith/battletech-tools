@@ -432,6 +432,18 @@ export class AlphaStrikeUnit {
         this.calcCurrentVals();
     }
 
+    public addSPA(spa:ISpecialPilotAbility) {
+        if (this.pilot.SpecialPilotAbilities.indexOf(spa)===-1){
+            this.pilot.SpecialPilotAbilities.push(spa);
+        }
+    }
+
+    public removeSPA(spa:ISpecialPilotAbility) {
+        if (this.pilot.SpecialPilotAbilities.indexOf(spa)>0){
+            this.pilot.SpecialPilotAbilities.splice(this.pilot.SpecialPilotAbilities.indexOf(spa), 1)
+        }
+    }
+
     public calcCurrentVals() {
 
         if(

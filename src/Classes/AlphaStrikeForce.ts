@@ -3,6 +3,12 @@ import { IASMULUnit, AlphaStrikeUnit } from './AlphaStrikeUnit';
 import { generateUUID } from '../utils';
 import { formationBonuses } from '../Data/formation-bonuses';
 
+/*
+
+Model for higher order unit orgs, ie. Companys/Binaries/Level IIIs and above
+
+*/
+
 export interface IASForceExport {
     groups: IASGroupExport[];
 	uuid: string;

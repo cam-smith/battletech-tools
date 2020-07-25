@@ -3,6 +3,13 @@ import { generateUUID } from '../utils';
 import {IFormationBonus, formationBonuses} from '../Data/formation-bonuses'
 
 
+/*
+
+Equivalent to a Lance/Star/Level II
+
+*/
+
+
 export interface IASGroupExport {
 	name: string;
 	units: IASMULUnit[];

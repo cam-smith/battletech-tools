@@ -75,6 +75,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.closeShowUnitDialog = this.closeShowUnitDialog.bind(this);
 
         this.updateUnitSkill = this.updateUnitSkill.bind(this);
+        this.updatePilotSpas = this.updatePilotSpas.bind(this);
         this.renameUnit = this.renameUnit.bind(this);
 
         this.addToGroup = this.addToGroup.bind(this);
@@ -286,6 +287,29 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
       }
     }
+    updatePilotSpas(event: React.ChangeEvent<HTMLSelectElement>){
+      if (this.state.showASUnit){
+        let unit = this.state.showASUnit!;
+        for(let i=0;i< event.currentTarget.options.length; i++){
+          let spa = event.currentTarget.options[i];
+          
+          if (spa.selected){
+            if (unit.pilot.SpecialPilotAbilities.findIndex(x=>x.Name===spa.value)<0){
+              unit.addSPA(specialPilotAbilities.find(x=>x.Name===spa.value)!);
+            }
+          }else {
+            if(unit.pilot.SpecialPilotAbilities.findIndex(x=>x.Name===spa.value)>0){
+              unit.removeSPA(specialPilotAbilities.find(x=>x.Name===spa.value)!)
+            }
+          }
+        }
+        this.setState({
+          showASUnit: unit
+        })
+        return true;
+      }
+
+    }
 
     renameUnit(event: React.FormEvent<HTMLInputElement>) {
       if(this.state.showASUnit) {
@@ -319,8 +343,14 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       }
       return result;
     }
-    getIsValidSPA(spa:ISpecialPilotAbility, unit:AlphaStrikeUnit):boolean{
-      let returnval:boolean=false;
+
+    getRemainingSPAPoints(unit:AlphaStrikeUnit):number{
+      let total = this.getAvailableSPAPoints(unit);
+      let spent = unit.pilot.SpecialPilotAbilities.reduce((sum, x)=>{return sum+x.Cost},0)
+      return total-spent;
+    }
+
+    getAvailableSPAPoints(unit:AlphaStrikeUnit):number{
       let pointsAvailable:number=0;
       switch(unit.pilot.Skill){
         case 4: 
@@ -345,6 +375,11 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
           break;
 
       }
+      return pointsAvailable;
+    }
+    getIsValidSPA(spa:ISpecialPilotAbility, unit:AlphaStrikeUnit):boolean{
+      let returnval:boolean=false;
+      let pointsAvailable = this.getAvailableSPAPoints(unit);
 
 
       let costval:boolean=spa.Cost<=pointsAvailable;
@@ -403,6 +438,15 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.props.appGlobals.currentASForce.groups[foundGroupIndex] = force;
         this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
       }
+      return true;
+    }
+    
+    addSPAToPilot(spa:ISpecialPilotAbility, unit:AlphaStrikeUnit): boolean{
+      unit.addSPA(spa);
+      this.setState({
+        showASUnit: unit
+
+      });
       return true;
     }
 
@@ -469,32 +513,22 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                             />
                           </label>
 
-
-                          <label>
-                            Skill Level:<br />
-                            <select
-                              value={this.state.showASUnit.pilot.Skill}
-                              onChange={this.updateUnitSkill}
-                            >
-                              <option value={1}>1</option>
-                              <option value={2}>2</option>
-                              <option value={3}>3</option>
-                              <option value={4}>4</option>
-                              <option value={5}>5</option>
-                              <option value={6}>6</option>
-                              <option value={7}>7</option>
-                              <option value={8}>8</option>
-                            </select>
-                          </label>
+                          <label>Available SP Points: {this.getRemainingSPAPoints(this.state.showASUnit)}/{this.getAvailableSPAPoints(this.state.showASUnit)}</label>
 
                           <label>Special Pilot Abilities:
-                            <select id="spas" multiple>
+                            <select id="spas" multiple onChange={this.updatePilotSpas} value={this.state.showASUnit.pilot.SpecialPilotAbilities.map(x=>{
+                              return x.Name
+                            })}>
                               {specialPilotAbilities.map((spa:ISpecialPilotAbility)=>{
                               return (<option key={spa.Name} value={spa.Name} disabled={!this.getIsValidSPA(spa,this.state.showASUnit!)} >{spa.Name}-{spa.Cost}-{spa.Summary}</option>)
                               })}
                             </select>
                           </label>
-                            
+                          <ul>
+                            {this.state.showASUnit.pilot.SpecialPilotAbilities.map(x=>{
+                              return (<li>{x.Name}</li>)
+                            })}
+                          </ul>
                             
                           <label>
                             <input 
