@@ -12,8 +12,7 @@ import { Link } from 'react-router-dom';
 import AlphaStrikeGroup from '../../../Classes/AlphaStrikeGroup';
 import UIPage from '../../Components/UIPage';
 import { formationBonuses } from '../../../Data/formation-bonuses';
-import { specialPilotAbilities, ISpecialPilotAbility } from '../../../Data/special-pilot-abilities';
-import AlphaStrikeForce from '../../../Classes/AlphaStrikeForce';
+import { threadId } from 'worker_threads';
 
 export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, IHomeState> {
     searchTech: string = "";
@@ -72,28 +71,22 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
 
         this.openViewUnit = this.openViewUnit.bind(this);
         this.openEditUnit = this.openEditUnit.bind(this);
-        this.closeShowUnitDialog = this.closeShowUnitDialog.bind(this);
 
-        this.updateUnitSkill = this.updateUnitSkill.bind(this);
-        this.renameUnit = this.renameUnit.bind(this);
+
 
         this.addToGroup = this.addToGroup.bind(this);
-        this.renameGroup = this.renameGroup.bind(this);
-        this.removeUnitFromGroup = this.removeUnitFromGroup.bind(this);
+        
         this.newGroup = this.newGroup.bind(this);
         this.updateFormationBonus = this.updateFormationBonus.bind(this);
 
-        this.toggleContextMenuForce = this.toggleContextMenuForce.bind(this);
+        
         this.toggleContextMenuSearch = this.toggleContextMenuSearch.bind(this);
         this.moveUnitToGroup = this.moveUnitToGroup.bind(this);
 
-        this.removeGroup = this.removeGroup.bind(this);
+        
         this.removeFavoriteConfirm = this.removeFavoriteConfirm.bind(this);
 
-        this.renamePilot = this.renamePilot.bind(this);
 
-        this.setCommander = this.setCommander.bind(this);
-        this.setSubCommander = this.setSubCommander.bind(this);
 
         this.updateSearchResults();
     }
@@ -117,25 +110,7 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
     }
 
-    removeGroup( groupIndex: number ) {
-      if( this.props.appGlobals.currentASForce.groups.length > groupIndex ) {
-        if(this.props.appGlobals.currentASForce.groups[groupIndex].getTotalUnits() === 0 ) {
-          this.props.appGlobals.currentASForce.removeGroup(groupIndex);
-          this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
-        } else {
-          this.props.appGlobals.openConfirmDialog(
-            "Confirmation",
-            "This group still contains units. Are you sure you want to still remove it?",
-            "Yes",
-            "No",
-            () => {
-              this.props.appGlobals.currentASForce.removeGroup(groupIndex);
-              this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
-            }
-          );
-        }
-      }
-    }
+
 
     moveUnitToGroup(
       fromUnitIndex: number,
@@ -249,13 +224,6 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
     }
 
 
-    closeShowUnitDialog() {
-      this.setState({
-        showASUnit: null,
-        groupIndex: null
-      })
-    }
-
     renameGroup( newName: string, groupIndex: number ) {
       this.props.appGlobals.currentASForce.renameGroup( newName, groupIndex );
       this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
@@ -280,275 +248,12 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
       this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
     }
 
-    updateUnitSkill(event: React.FormEvent<HTMLSelectElement>) {
-      if(this.state.showASUnit) {
-        this.state.showASUnit.setSkill( +event.currentTarget.value );
-        this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
-      }
-    }
-
-    renameUnit(event: React.FormEvent<HTMLInputElement>) {
-      if(this.state.showASUnit) {
-        let asUnit = this.state.showASUnit;
-        asUnit.customName = event.currentTarget.value;
-        this.setState({
-          showASUnit: asUnit,
-        })
-        this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
-      }
-    }
-    renamePilot(event: React.FormEvent<HTMLInputElement>){
-      if(this.state.showASUnit){
-        let asUnit= this.state.showASUnit;
-        asUnit.pilot.Name = event.currentTarget.value;
-        this.setState({
-          showASUnit: asUnit,
-        })
-        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
-      }
-    }
-
-    getAvailableSlots(skill:number):boolean[]{
-
-      let pool=5;
-      console.log(pool-skill);
-      let result:boolean[]=[];
-      for (let i=0;i<(pool-skill);i++){
-        console.log("pushed")
-        result.push(false);
-      }
-      return result;
-    }
-    getIsValidSPA(spa:ISpecialPilotAbility, unit:AlphaStrikeUnit):boolean{
-      let returnval:boolean=false;
-      let pointsAvailable:number=0;
-      switch(unit.pilot.Skill){
-        case 4: 
-          pointsAvailable=2;
-          break;
-        
-        case 3: 
-          pointsAvailable=4;
-          break;
-        
-        case 2: 
-          pointsAvailable=4;
-          break;
-        
-        case 1:
-          pointsAvailable=6;
-          break;
-        case 0:
-          pointsAvailable=6;
-          break;
-        default:
-          break;
-
-      }
-
-
-      let costval:boolean=spa.Cost<=pointsAvailable;
-      let typeval:boolean=spa.Types.some(x=>(x===unit.type || x==="Any"));
-      //console.log(spa.Name + " applicable to:"+ spa.Types + " unit:" + unit.type + "equals" + typeval + " points"+costval + " returned"+ (costval&&typeval));
-
-      returnval=  costval && typeval;
-
-
-      return returnval;
-    }
-
-
-    setCommander(force:AlphaStrikeForce, newVal:boolean):boolean {
-      if(this.state.showASUnit){
-        
-        force.groups.map(x=>{
-          x.members.map(x=>{
-            x.pilot.IsCommander=false;
-            x.pilot.CommanderUuid="";
-            return true;
-            });
-            return true;
-        });
-        let asUnit= this.state.showASUnit;
-
-        asUnit.pilot.IsCommander = newVal;
-        asUnit.pilot.CommanderUuid = newVal?force.uuid:"";
-        
-        this.setState({
-          showASUnit: asUnit,
-        })
-        
-        this.props.appGlobals.saveCurrentASForce(force);
-      }
-      return true;
-    }
-
-    setSubCommander(force:AlphaStrikeGroup, newVal:boolean):boolean {
-      
-      if(this.state.showASUnit){
-        var foundGroupIndex = this.props.appGlobals.currentASForce.groups.indexOf(force);
-        let asUnit= this.state.showASUnit;
-        force.members.map(x=>{
-                              x.pilot.IsSubCommander=false;
-                              x.pilot.SubCommanderUuid="";
-                              return true;
-                              });
-
-        asUnit.pilot.IsSubCommander = newVal;
-        asUnit.pilot.SubCommanderUuid = newVal?force.uuid:"";
-        this.setState({
-          showASUnit: asUnit,
-          
-        })
-        this.props.appGlobals.currentASForce.groups[foundGroupIndex] = force;
-        this.props.appGlobals.saveCurrentASForce(this.props.appGlobals.currentASForce);
-      }
-      return true;
-    }
+    
 
     render() {
       return (
         <>
-
-            <Modal
-              onHide={this.closeShowUnitDialog}
-              show={this.state.showASUnit !== null}
-              className="modal-xl"
-            >
-              <Modal.Header closeButton>
-                  <Modal.Title>
-                    {this.state.editASUnit ? (
-                      <>
-                        Editing Unit: {this.state.showASUnit ? (this.state.showASUnit.name ) : ( "" ) }
-                      </>
-                    ) : (
-                      <>Viewing Unit: {this.state.showASUnit ? (this.state.showASUnit.name ) : ( "" ) }</>
-                    )}
-
-                  </Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="text-center">
-                    {this.state.editASUnit && this.state.showASUnit ? (
-                      <div className="row">
-                        <div className="col-xs-6 col-lg-8 text-left" >
-                          <label>
-                            Custom Unit Name:<br />
-                            <input
-                              type="text"
-                              value={this.state.showASUnit.customName}
-                              placeholder="Enter your custom mech's name here"
-                              onChange={this.renameUnit}
-                            />
-                          </label>
-                        </div>
-                        <div className="col-xs-6 col-lg-4 text-left">
-                          <label>
-                            Skill Level:<br />
-                            <select
-                              value={this.state.showASUnit.currentSkill}
-                              onChange={this.updateUnitSkill}
-                            >
-                              <option value={1}>1</option>
-                              <option value={2}>2</option>
-                              <option value={3}>3</option>
-                              <option value={4}>4</option>
-                              <option value={5}>5</option>
-                              <option value={6}>6</option>
-                              <option value={7}>7</option>
-                              <option value={8}>8</option>
-                            </select>
-                          </label>
-
-                          <label>
-                            Pilot Name:<br/>
-                            <input 
-                              type="text" 
-                              value={this.state.showASUnit.pilot.Name}
-                              placeholder="Pilot Name"
-                              onChange={this.renamePilot}
-                            />
-                          </label>
-
-
-                          <label>
-                            Skill Level:<br />
-                            <select
-                              value={this.state.showASUnit.pilot.Skill}
-                              onChange={this.updateUnitSkill}
-                            >
-                              <option value={1}>1</option>
-                              <option value={2}>2</option>
-                              <option value={3}>3</option>
-                              <option value={4}>4</option>
-                              <option value={5}>5</option>
-                              <option value={6}>6</option>
-                              <option value={7}>7</option>
-                              <option value={8}>8</option>
-                            </select>
-                          </label>
-
-                          <label>Special Pilot Abilities:
-                            <select id="spas" multiple>
-                              {specialPilotAbilities.map((spa:ISpecialPilotAbility)=>{
-                              return (<option key={spa.Name} value={spa.Name} disabled={!this.getIsValidSPA(spa,this.state.showASUnit!)} >{spa.Name}-{spa.Cost}-{spa.Summary}</option>)
-                              })}
-                            </select>
-                          </label>
-                            
-                            
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              id="Commander" 
-                              //checked={this.state.showASUnit.pilot.IsCommander} 
-                              defaultChecked={this.state.showASUnit.pilot.IsCommander}
-                              onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
-                                  this.setCommander(
-                                                    this.props.appGlobals.currentASForce,
-                                                    ev.target.checked
-                                                    )
-                                            }}
-                            /> Commander
-                          </label>
-                          <label>
-                            <input 
-                              type="checkbox" 
-                              id="SubCommander" 
-                              //checked={this.state.showASUnit.pilot.IsSubCommander}
-                              defaultChecked={this.state.showASUnit.pilot.IsSubCommander}
-                              onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
-                                let cleanIndex: number = this.state.groupIndex===null?0:this.state.groupIndex;
-                                this.setSubCommander(
-                                                  this.props.appGlobals.currentASForce.groups[cleanIndex],
-                                                  ev.target.checked
-                                                  )
-                                          }}
-                            /> SubCommander
-                          </label>
-
-                          
-                        </div>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  <AlphaStrikeUnitSVG
-                    height="auto"
-                    width="100%"
-                    appGlobals={this.props.appGlobals}
-                    asUnit={this.state.showASUnit}
-                    // inPlay={true}
-                  />
-              </Modal.Body>
-              {/* <Modal.Footer>
-
-                  <Button variant="secondary" onClick={this.closeShowUnitDialog}>
-                      Close
-                  </Button>
-
-              </Modal.Footer> */}
-          </Modal>
-
+        <></>
         <UIPage current="alpha-strike-roster" appGlobals={this.props.appGlobals}>
 
           {this.props.appGlobals.currentASForce.getTotalUnits() > 0 ? (
@@ -573,174 +278,8 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                 <h2>Current Force</h2>
                 <div className="section-content">
                 {this.props.appGlobals.currentASForce.groups.map( (asGroup, asGroupIndex) => {
-                  return (<fieldset key={asGroupIndex} className="fieldset">
-                    <legend>{asGroup.getName(asGroupIndex + 1)}</legend>
-
-                    <div className="pull-right">
-                      <Button
-                        onClick={() => this.props.appGlobals.saveASGroupFavorite( asGroup )}
-                        title="Click here to add this group to your favorites."
-                        className="btn-sm"
-                      >
-                        <FontAwesomeIcon icon={faHeart} />
-                      </Button>
-                      <Button
-                        onClick={() => this.removeGroup(asGroupIndex)}
-                        title="Click here to remove this group."
-                        className="btn-sm"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </Button>
-                    </div>
-                    <label
-                      className="width-80"
-                    >
-                      <input
-                        type="text"
-                        onChange={(event: React.FormEvent<HTMLInputElement>) => this.renameGroup(event.currentTarget.value, asGroupIndex)}
-                        value={asGroup.customName}
-                      />
-                    </label>
-
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th>&nbsp;</th>
-                          <th>Name</th>
-                          <th>Points</th>
-
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {asGroup.members.length > 0 ? (
-                        <>
-                        {asGroup.members.map( (asUnit, asUnitIndex) => {
-                          return (
-                            <tr key={"G"+asGroupIndex + "U"+asUnitIndex}>
-                              <td className="text-left min-width no-wrap">
-                                {this.props.appGlobals.currentASForce.getTotalGroups() > 1 ?
-                                (
-                                  <div className="drop-down-menu-container">
-                                    <Button
-                                      variant="primary"
-                                      className="btn-sm"
-                                      title="Open the context menu for this unit"
-                                      onClick={() => this.toggleContextMenuForce( asGroupIndex, asUnitIndex )}
-                                    >
-                                      <FontAwesomeIcon icon={faBars} />
-                                    </Button>
-                                    <ul
-                                      className={this.state.contextMenuGroup === asGroupIndex && this.state.contextMenuUnit === asUnitIndex ? "styleless dd-menu active" : "styleless dd-menu"}
-                                    >
-                                      <li
-                                        onClick={() => this.openEditUnit(asUnit, asGroupIndex)}
-                                        title="Edit this unit"
-                                      ><
-                                        FontAwesomeIcon icon={faEdit} /> Edit
-                                      </li>
-                                      {this.props.appGlobals.currentASForce.groups.map( (asGroup, asGroupListIndex) => {
-                                        return (
-                                          <>
-                                            {asGroupListIndex !== asGroupIndex ? (
-                                              <li
-                                                onClick={() => this.moveUnitToGroup(asUnitIndex, asGroupIndex, asGroupListIndex)}
-                                                title="Move this unit to another group"
-                                              >
-                                                <FontAwesomeIcon icon={faArrowsAlt} />&nbsp;
-                                                Move to {asGroup.getName(asGroupListIndex + 1)}
-                                              </li>
-                                            ) :
-                                            ( <></> )}
-                                          </>
-                                        )
-                                      })}
-                                    </ul>
-                                  </div>
-                                ) : (
-                                  <>
-                                  <Button
-                                    variant="primary"
-                                    className="btn-sm"
-                                    onClick={() => this.openEditUnit(asUnit, asGroupIndex)}
-                                    title="Edit this unit's skill and name"
-                                  >
-                                    <FontAwesomeIcon icon={faEdit} />
-                                  </Button>
-                                  </>
-                                )}
-
-
-                                <Button
-                                  variant="primary"
-                                  className="btn-sm no-right-margin"
-                                  onClick={() => this.removeUnitFromGroup(asGroupIndex, asUnitIndex)}
-                                  title="Remove this unit"
-                                >
-                                  <FontAwesomeIcon icon={faTrash} />
-                                </Button>
-                              </td>
-                              <td>
-                                {asUnit.customName ? (
-                                  <><strong>{asUnit.customName}</strong><br /></>
-                                ) : (
-                                  <></>
-                                )}
-                                {asUnit.name}
-                                <br/>
-                                { (asUnit.pilot.IsCommander)?(
-                                  <FontAwesomeIcon icon={faStar} />
-                                ):null }
-                                { (asUnit.pilot.IsSubCommander)?(
-                                  <FontAwesomeIcon icon={faStarHalfAlt} />
-                                ):null }
-
-                                Pilot:{asUnit.pilot.Name} - Skill:{asUnit.pilot.Skill}
-                              </td>
-                              <td>{asUnit.currentPoints}</td>
-
-                            </tr>
-                          )
-                        })}
-                        </>
-                      ) : (
-                        <tr><td colSpan={3} className="text-center">No Units</td></tr>
-                      )}
-                      </tbody>
-
-                      <tfoot key="footer">
-                        <tr key="groupsum">
-                          <td className="text-left min-width no-wrap"></td>
-                          <td>
-                            <strong>Available Bonuses</strong>:({asGroup.availableFormationBonuses.length-1})
-                            <select
-                              value={asGroup.formationBonus? asGroup.formationBonus.Name:"" }
-                              onChange={(event:React.FormEvent<HTMLSelectElement>)=>this.updateFormationBonus(event, asGroupIndex)}
-                            >
-                              {asGroup.availableFormationBonuses.map((bonus)=>{
-                                return (
-                                <option key={bonus.Name} value={bonus.Name}>{bonus.Name}</option>
-                                )
-                              })}
-                            </select>
-                            <br/>
-                            {(asGroup.formationBonus && asGroup.formationBonus.Name!=="None") ? (
-
-                              <>
-                                <strong>Bonus</strong>: {asGroup.formationBonus.BonusDescription}
-                              </>
-
-                            ) : null
-                            }
-                          </td>
-                          <td>
-                            Points: {asGroup.getTotalPoints()}<br/>
-                            Avg. Skill: {asGroup.getAverageSkill().toPrecision(3)}
-                          </td>
-                        </tr>
-                      </tfoot>
-
-                    </table>
-                  </fieldset>
+                  return (
+                  <></>
                   )
                 })}
                 <p>
