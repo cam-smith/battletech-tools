@@ -86,22 +86,52 @@ export default class AlphaStrikeRosterInPlay extends React.Component<IInPlayProp
                   {group.members.map( (unit, unitIndex) => {
                     return (
                     <React.Fragment key={unitIndex}>
-                      <div className={this.state.cardMode ? "col-md-6 col-lg-6 col-xl-6" : "col-md-12"}>
+                      <div className={this.state.cardMode ? "col-md-6 col-lg-6 col-xl-6" : "col-md-12"} style={{pageBreakInside:"avoid"}}>
                         <AlphaStrikeUnitSVG
                           asUnit={unit}
                           inPlay={true}
                           appGlobals={this.props.appGlobals}
                           className="small-margins"
                         />
+                        {
+                          (unit.pilot.IsCommander)?
+                          (
+                            <>
+                              <p><strong>Commander</strong></p>
+                            </>
+                          ):null
+                        }
+                        {
+                          (unit.pilot.IsSubCommander)?
+                          (
+                            <>
+                              <p><strong>Sub-Commander</strong></p>
+                            </>
+                          ):null
+                        }
+
+
+                        {(unit.pilot.SpecialPilotAbilities.length>0)?(
+                          <>
+                            <p><strong>Special Pilot Abilities</strong>:</p>
+                            <ul>
+                              {unit.pilot.SpecialPilotAbilities.map(spa=>{
+                                return (<li><label>{spa.Name}</label>{spa.Summary}{spa.Description}</li>)
+                              })}
+                            </ul>
+                          </>
+                        ):null
+                          
+                        
+                        }
                       </div>
                     </React.Fragment>
                     )
                   })}
-                  {console.log(group.formationBonus)}
                   {group.formationBonus!.Name!=="None"?(
                     <>
                     <div className={this.state.cardMode ? "col-md-6 col-lg-6 col-xl-6" : "col-md-12"}>
-                      <p><strong>Bonus</strong>:<br/>
+                      <p><strong>Formation Bonus</strong>:<br/>
                       <strong>{group.formationBonus!.Name}</strong> - {group.formationBonus!.BonusDescription}</p>
                     </div>
                     </>
@@ -110,9 +140,11 @@ export default class AlphaStrikeRosterInPlay extends React.Component<IInPlayProp
                   </div>
               </div>
               </div>
+              <div style={{pageBreakAfter: "always"}}></div>
             </React.Fragment>
             )
           })}
+          
         </>
       );
     }
