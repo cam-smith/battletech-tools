@@ -439,9 +439,8 @@ export class AlphaStrikeUnit {
     }
 
     public removeSPA(spa:ISpecialPilotAbility) {
-        if (this.pilot.SpecialPilotAbilities.indexOf(spa)>0){
-            this.pilot.SpecialPilotAbilities.splice(this.pilot.SpecialPilotAbilities.indexOf(spa), 1)
-        }
+        
+        this.pilot.SpecialPilotAbilities = this.pilot.SpecialPilotAbilities.filter(x=>x.Name!==spa.Name);
     }
 
     public calcCurrentVals() {

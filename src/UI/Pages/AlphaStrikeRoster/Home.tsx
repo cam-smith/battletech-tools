@@ -287,22 +287,20 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
         this.props.appGlobals.saveCurrentASForce( this.props.appGlobals.currentASForce );
       }
     }
-    updatePilotSpas(event: React.ChangeEvent<HTMLSelectElement>){
+    
+    updatePilotSpas(event: React.ChangeEvent<HTMLInputElement>){
       if (this.state.showASUnit){
         let unit = this.state.showASUnit!;
-        for(let i=0;i< event.currentTarget.options.length; i++){
-          let spa = event.currentTarget.options[i];
-          
-          if (spa.selected){
-            if (unit.pilot.SpecialPilotAbilities.findIndex(x=>x.Name===spa.value)<0){
-              unit.addSPA(specialPilotAbilities.find(x=>x.Name===spa.value)!);
-            }
-          }else {
-            if(unit.pilot.SpecialPilotAbilities.findIndex(x=>x.Name===spa.value)>0){
-              unit.removeSPA(specialPilotAbilities.find(x=>x.Name===spa.value)!)
-            }
-          }
+        let spa= specialPilotAbilities.find(f=>f.Name===event.target.value)!;
+        if (event.target.checked){
+          //setting
+          unit.addSPA(spa);
+        }else{
+          //unsetting
+          unit.removeSPA(spa);
         }
+
+        
         this.setState({
           showASUnit: unit
         })
@@ -512,21 +510,60 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               onChange={this.renamePilot}
                             />
                           </label>
+                          
 
-                          <label>Available SP Points: {this.getRemainingSPAPoints(this.state.showASUnit)}/{this.getAvailableSPAPoints(this.state.showASUnit)}</label>
+                            <fieldset className="fieldset">
+                            <legend>Special Pilot Abilities: {this.getRemainingSPAPoints(this.state.showASUnit)}/{this.getAvailableSPAPoints(this.state.showASUnit)}</legend>
+                            
+                            <table className="table col-md-12">
+                                <thead>
+                                  <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>Cost</th>
+                                    <th>Desc</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {specialPilotAbilities.map((spa:ISpecialPilotAbility)=>{
+                                        let unit = this.state.showASUnit!;
+                                      if (this.getIsValidSPA(spa, unit)){
+                                        let checked=(unit.pilot.SpecialPilotAbilities.find(x=>x.Name===spa.Name)!==undefined)
+                                        let purchasable = (this.getRemainingSPAPoints(unit)>=spa.Cost)
+                                      
+                                        return (
+                                          <tr key={spa.Name}>
+                                            <td>
+                                          
+                                            <input 
+                                              type="checkbox" 
+                                              id="spas" 
+                                              name="spas"
+                                              value={spa.Name} 
+                                              checked={checked}
+                                              onChange={this.updatePilotSpas}
+                                              disabled={ (checked?false:(purchasable?false:true)) }
+                                              />
+                                              </td>
+                                              <td>
+                                                {spa.Name}
+                                              </td>
+                                              <td>{spa.Cost}</td>
+                                              <td>{spa.Summary}</td>
+                                          </tr>
+                                          )
+                                      }else{
+                                        return (<></>)
+                                      }
+                                })}
+                                </tbody>
+                            </table>
 
-                          <label>Special Pilot Abilities:
-                            <select id="spas" multiple onChange={this.updatePilotSpas} value={this.state.showASUnit.pilot.SpecialPilotAbilities.map(x=>{
-                              return x.Name
-                            })}>
-                              {specialPilotAbilities.map((spa:ISpecialPilotAbility)=>{
-                              return (<option key={spa.Name} value={spa.Name} disabled={!this.getIsValidSPA(spa,this.state.showASUnit!)} >{spa.Name}-{spa.Cost}-{spa.Summary}</option>)
-                              })}
-                            </select>
-                          </label>
+                            </fieldset>
+
                           <ul>
                             {this.state.showASUnit.pilot.SpecialPilotAbilities.map(x=>{
-                              return (<li>{x.Name}</li>)
+                              return (<li key={x.Name}>{x.Name}</li>)
                             })}
                           </ul>
                             
@@ -996,7 +1033,9 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               <td>{asUnit.Rules}</td>
                               <td>{asUnit.Technology.Name}</td>
                               <td>{asUnit.Tonnage}</td>
-                              <td>{asUnit.BFType}</td>
+                              <td>{asUnit.BFType}<br/>
+                              <span className="statsBlock no-wrap">{asUnit.Role.Name}</span>
+                              </td>
                               <td>{asUnit.BFPointValue}</td>
 
                             </tr>
