@@ -19,6 +19,21 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
     searchTech: string = "";
     searchTerm: string = "";
     searchRules: string = "";
+    searchMinTonnes: string = "";
+    searchMaxTonnes: string = "";
+    searchMinBV: string = "";
+    searchMaxBV: string = "";
+    searchMinIntroDate: string = "";
+    searchMaxIntroDate: string = "";
+    searchRole: string= "";
+    searchMinPV: string = "";
+    searchMaxPV: string = "";
+    searchASAbilities: string = "";
+    searchRoleDD: string = "";
+    searchFactions: string = "";
+   
+
+
     constructor(props: IHomeProps) {
         super(props);
 
@@ -46,9 +61,93 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
           lsSearchResults = JSON.parse(rawLSSearchResults);
         }
 
+        let lsSearchMinTonnes = "";
+        let rawLSSearchMinTonnes = localStorage.getItem("asSearchMinTonnes");
+        if( rawLSSearchMinTonnes ) {
+          lsSearchMinTonnes = rawLSSearchMinTonnes;
+        }
+
+        let lsSearchMaxTonnes = "";
+        let rawLSSearchMaxTonnes = localStorage.getItem("asSearchMaxTonnes");
+        if( rawLSSearchMaxTonnes ) {
+          lsSearchMaxTonnes = rawLSSearchMaxTonnes;
+        }
+
+        let lsSearchMinBV = "";
+        let rawLSSearchMinBV = localStorage.getItem("asSearchMinBV");
+        if( rawLSSearchMinBV ) {
+          lsSearchMinBV = rawLSSearchMinBV;
+        }
+
+        let lsSearchMaxBV = "";
+        let rawLSSearchMaxBV = localStorage.getItem("asSearchMaxBV");
+        if( rawLSSearchMaxBV ) {
+          lsSearchMaxBV = rawLSSearchMaxBV;
+        }
+
+        let lsSearchMinIntroDate = "";
+        let rawLSSearchMinIntroDate = localStorage.getItem("asSearchMinIntroDate");
+        if( rawLSSearchMinIntroDate ) {
+          lsSearchMinIntroDate = rawLSSearchMinIntroDate;
+        }
+
+        let lsSearchMaxIntroDate = "";
+        let rawLSSearchMaxIntroDate = localStorage.getItem("asSearchMaxIntroDate");
+        if( rawLSSearchMaxIntroDate ) {
+          lsSearchMaxIntroDate = rawLSSearchMaxIntroDate;
+        }
+
+        let lsSearchRole = "";
+        let rawLSSearchRole = localStorage.getItem("asSearchRole");
+        if( rawLSSearchRole ) {
+          lsSearchRole = rawLSSearchRole;
+        }
+
+        let lsSearchMinPV = "";
+        let rawLSSearchMinPV = localStorage.getItem("asSearchMinPV");
+        if( rawLSSearchMinPV ) {
+          lsSearchMinPV = rawLSSearchMinPV;
+        }
+
+        let lsSearchMaxPV = "";
+        let rawLSSearchMaxPV = localStorage.getItem("asSearchMaxPV");
+        if( rawLSSearchMaxPV ) {
+          lsSearchMaxPV = rawLSSearchMaxPV;
+        }
+
+        let lsSearchASAbilities = "";
+        let rawLSSearchASAbilities = localStorage.getItem("asSearchASAbilities");
+        if( rawLSSearchASAbilities ) {
+          lsSearchASAbilities = rawLSSearchASAbilities;
+        }
+
+        let lsSearchRoleDD = "";
+        let rawLSSearchRoleDD = localStorage.getItem("asSearchRoleDD");
+        if( rawLSSearchRoleDD ) {
+          lsSearchRoleDD = rawLSSearchRoleDD;
+        }
+
+        let lsSearchFactions = "";
+        let rawLSSearchFactions = localStorage.getItem("asSearchFaction");
+        if (rawLSSearchFactions ){
+          lsSearchFactions = rawLSSearchFactions;
+        }
+
         this.searchTech = lsSearchTech;
         this.searchTerm = lsSearchTerm;
         this.searchRules = lsSearchRules;
+        this.searchMinTonnes = lsSearchMinTonnes;
+        this.searchMaxTonnes = lsSearchMaxTonnes;
+        this.searchMinBV = lsSearchMinBV;
+        this.searchMaxBV = lsSearchMaxBV;
+        this.searchMinIntroDate = lsSearchMinIntroDate;
+        this.searchMaxIntroDate = lsSearchMaxIntroDate;
+        this.searchRole = lsSearchRole;
+        this.searchMinPV = lsSearchMinPV;
+        this.searchMaxPV = lsSearchMaxPV;
+        this.searchASAbilities = lsSearchASAbilities;
+        this.searchRoleDD =  lsSearchRoleDD;
+        this.searchFactions = lsSearchFactions;
 
         this.state = {
             updated: false,
@@ -58,6 +157,20 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
             groupIndex: null,
             searchText: lsSearchTerm,
             editASUnit: false,
+
+            searchMinTonnes: lsSearchMinTonnes,
+            searchMaxTonnes: lsSearchMaxTonnes,
+            searchMinBV: lsSearchMinBV,
+            searchMaxBV: lsSearchMaxBV,
+            searchMinIntroDate: lsSearchMinIntroDate,
+            searchMaxIntroDate: lsSearchMaxIntroDate,
+            searchRole: lsSearchRole,
+            searchMinPV: lsSearchMinPV,
+            searchMaxPV: lsSearchMaxPV,
+            searchASAbilities: lsSearchASAbilities,
+            searchFactions: lsSearchFactions,
+
+            showAdvancedSearch: false,
 
             contextMenuGroup: -1,
             contextMenuUnit: -1,
@@ -95,6 +208,8 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
 
         this.setCommander = this.setCommander.bind(this);
         this.setSubCommander = this.setSubCommander.bind(this);
+
+        this.updateShowAdvancedSearch = this.updateShowAdvancedSearch.bind(this);
 
         this.updateSearchResults();
     }
@@ -136,6 +251,14 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
           );
         }
       }
+    }
+
+    updateShowAdvancedSearch(){
+      this.setState(
+        {
+          showAdvancedSearch: !this.state.showAdvancedSearch
+        }
+      )
     }
 
     moveUnitToGroup(
@@ -473,15 +596,30 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                     {this.state.editASUnit && this.state.showASUnit ? (
                       <div className="row">
                         <div className="col-xs-6 col-lg-8 text-left" >
-                          <label>
-                            Custom Unit Name:<br />
-                            <input
-                              type="text"
-                              value={this.state.showASUnit.customName}
-                              placeholder="Enter your custom mech's name here"
-                              onChange={this.renameUnit}
-                            />
-                          </label>
+                          <div className="row">
+                            <div className="col-md-12">
+                              <label>
+                                Custom Unit Name:<br />
+                                <input
+                                  type="text"
+                                  value={this.state.showASUnit.customName}
+                                  placeholder="Enter your custom mech's name here"
+                                  onChange={this.renameUnit}
+                                />
+                              </label>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-md-12">
+                              <AlphaStrikeUnitSVG
+                                height="auto"
+                                width="100%"
+                                appGlobals={this.props.appGlobals}
+                                asUnit={this.state.showASUnit}
+                                // inPlay={true}
+                              />
+                            </div>
+                          </div>
                         </div>
                         <div className="col-xs-6 col-lg-4 text-left">
                           <label>
@@ -601,15 +739,21 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                         </div>
                       </div>
                     ) : (
-                      <></>
+                      <AlphaStrikeUnitSVG
+                      height="auto"
+                      width="100%"
+                      appGlobals={this.props.appGlobals}
+                      asUnit={this.state.showASUnit}
+                      // inPlay={true}
+                    />
                     )}
-                  <AlphaStrikeUnitSVG
-                    height="auto"
-                    width="100%"
-                    appGlobals={this.props.appGlobals}
-                    asUnit={this.state.showASUnit}
-                    // inPlay={true}
-                  />
+                      {/* <AlphaStrikeUnitSVG
+                        height="auto"
+                        width="100%"
+                        appGlobals={this.props.appGlobals}
+                        asUnit={this.state.showASUnit}
+                        // inPlay={true}
+                      /> */}
               </Modal.Body>
               {/* <Modal.Footer>
 
@@ -951,6 +1095,104 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                       </select>
                     </label>
                       </div>
+
+                    </div>
+                    <div className="row">
+                      <div className="col-md-12 text-center">
+                        <div className="container">
+                          <fieldset><legend onClick={this.updateShowAdvancedSearch}>Advanced Search</legend>
+                          { this.state.showAdvancedSearch &&
+                          <div>
+                          <div className="row">
+                            <div className="col-md-1"><br/><label>Min</label><label>Max</label></div>
+                            <div className="col-md-2 text-center"><label>Tons</label>
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinTonnes}
+                              />
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinTonnes}
+                              />
+                            </div>
+                            <div className="col-md-2 text-center"><label>BV</label>
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinBV}
+                              />
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinBV}
+                              />
+                            </div>
+                            <div className="col-md-2 text-center"><label>Intro</label>
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinIntroDate}
+                              />
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinIntroDate}
+                              />
+                            </div>
+                            <div className="col-md-2 text-center"><label>PV</label>
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinPV}
+                              />
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchMinPV}
+                              />
+                            </div>                            
+                                                  
+                          </div>
+    
+                          <div className="row">
+                            <div className="col-md-3 text-center"><label>AS Abilities</label></div>
+                            <div className="col-md-3 text-center">
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchASAbilities}
+                              />
+                            </div>
+                            <div className="col-md-3 text-center"><label>Role</label></div>
+                            <div className="col-md-3 text-center">
+                              <input
+                                type="search"
+                                //onChange={this.updateSearch}
+                                value={this.state.searchRole}
+                              />
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col-md-3 text-center"><label>Factions</label></div>
+                            <div className="col-md-3">
+                              <input
+                                type="search"
+                                value={this.state.searchFactions}
+                              />
+                            </div>
+                          </div>
+                          <hr/>
+                          <div className="row">
+                            <div className="col-md-12 text-right">
+                            <button type="button" className="display-block text-center full-width no-margin btn btn-primary">Search</button>
+                            </div>
+                          </div>
+                          </div> }
+                          </fieldset>
+                        </div>
+                      </div>    
                     </div>
                   </fieldset>
 
@@ -1030,7 +1272,30 @@ export default class AlphaStrikeRosterHome extends React.Component<IHomeProps, I
                               <span className="statsBlock no-wrap">{asUnit.BFDamageShort}/{asUnit.BFDamageMedium}/{asUnit.BFDamageLong}/{asUnit.BFDamageExtreme} [{asUnit.BFArmor}/{asUnit.BFStructure}]</span>
                               </td>
                               <td>{asUnit.DateIntroduced}</td>
-                              <td>{asUnit.Rules}</td>
+                              <td>{(() => {
+                                //quick hack to get UI fit on screen until I can redesign
+                                let result = '';
+                                switch(asUnit.Rules){
+                                  case 'Standard' :
+                                    result = 'Std';
+                                    break;
+                                  case 'Introductory':
+                                    result = 'Intro'
+                                    break;
+                                  case 'Advanced':
+                                    result = 'Adv';
+                                    break;
+                                  case 'Experimental':
+                                    result = 'Exp';
+                                    break;
+                                  case 'Era Specific':
+                                    result = 'Era';
+                                    break;
+                                  default:
+                                    result = asUnit.Rules;
+                                }
+                                return result;
+                              })()}</td>
                               <td>{asUnit.Technology.Name}</td>
                               <td>{asUnit.Tonnage}</td>
                               <td>{asUnit.BFType}<br/>
@@ -1087,6 +1352,21 @@ interface IHomeState {
   showASUnit: AlphaStrikeUnit | null;
   groupIndex: number|null;
   editASUnit: boolean;
+
+  searchMinTonnes: string;
+  searchMaxTonnes: string;
+  searchMinBV: string;
+  searchMaxBV: string;
+  searchMinIntroDate: string;
+  searchMaxIntroDate: string;
+  searchRole: string;
+  searchMinPV: string;
+  searchMaxPV: string;
+  searchASAbilities: string;
+
+  searchFactions: string;
+
+  showAdvancedSearch: boolean;
 
   contextMenuGroup: number;
   contextMenuUnit: number;
